@@ -25,6 +25,20 @@ app.get('/users', (req, res) => {
 
 });
 
+app.get('/employees', (req, res) => {
+
+  const sql = "SELECT * FROM employees";
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.json(results);
+  });
+
+});
+
 // PORT
 const PORT = process.env.PORT || 3000;
 
