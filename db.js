@@ -1,16 +1,19 @@
 const mysql = require('mysql2');
 
 const db = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
-  password: '1234567',
-  database: 'backend_db'
+  host: 'gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com',
+  user: '45iBUQpXhubjd2V.root',
+  password: 'zu4NBfNLDZJ1FNOL',
+  database: 'test',
+  port: 4000,
+  ssl: {
+    rejectUnauthorized: true
+  }
 });
 
 db.connect((err) => {
   if (err) {
-    console.log('❌ MySQL Error:', err.code);
-    console.log('Message:', err.message);
+    console.log('❌ DB Error:', err.message);
   } else {
     console.log('✅ MySQL Connected');
   }

@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+const db = require('./db'); // 👈 connect DB file
+
 app.use(express.json());
 
 // Home route
@@ -8,27 +10,24 @@ app.get('/', (req, res) => {
   res.send('Backend Working');
 });
 
-// Users API
+// GET users from MySQL (THIS IS YOUR ANSWER)
 app.get('/users', (req, res) => {
-  res.json([
-    { id: 1, name: 'Pankaj' },
-    { id: 2, name: 'Rohit' }
-  ]);
-});
 
-// Login API
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
+  const sql = "SELECT * FROM users";
 
-  res.json({
-    success: true,
-    email: email
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err });
+    }
+
+    res.json(results);
   });
+
 });
 
-// PORT for Render
+// PORT
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log('Server running on port ' + PORT);
+  console.log("Server running on port " + PORT);
 });
