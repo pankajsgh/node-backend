@@ -1,32 +1,22 @@
 const express = require('express');
-
 const app = express();
 
+app.use(express.json());
+
+// Home route
 app.get('/', (req, res) => {
   res.send('Backend Working');
 });
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
-});
-
+// Users API
 app.get('/users', (req, res) => {
   res.json([
-    {
-      id: 1,
-      name: 'Pankaj'
-    },
-    {
-      id: 2,
-      name: 'Rohit'
-    }
+    { id: 1, name: 'Pankaj' },
+    { id: 2, name: 'Rohit' }
   ]);
-  
 });
 
-
-app.use(express.json());
-
+// Login API
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -34,4 +24,11 @@ app.post('/login', (req, res) => {
     success: true,
     email: email
   });
+});
+
+// PORT for Render
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log('Server running on port ' + PORT);
 });
