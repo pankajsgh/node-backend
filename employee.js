@@ -47,34 +47,35 @@ exports.getEmployees = (req, res) => {
 exports.createEmployee = (req, res) => {
   const { name, role, department, color } = req.body;
 
-  if (!name || !role || !department || !color) {
-    return res.status(400).json({
-      success: false,
-      message: "All fields are required",
-    });
-  }
-
-  const sql = `
-    INSERT INTO employees (name, role, department, color)
-    VALUES (?, ?, ?, ?)
-  `;
-
   db.query(
-    sql,
-    [name, role, department, color],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          error: err.message,
-        });
-      }
+    "SELECT COALESCE(MAX(id),0)+1 AS nextId FROM employees",
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
 
-      res.status(201).json({
-        success: true,
-        message: "Employee created",
-        id: result.insertId,
-      });
+      const nextId = rows[0].nextId;
+
+      const sql = `
+        INSERT INTO employees (id, name, role, department, color)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+
+      db.query(
+        sql,
+        [nextId, name, role, department, color],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({
+              success: false,
+              error: err.message,
+            });
+          }
+
+          res.json({
+            success: true,
+            id: nextId,
+          });
+        }
+      );
     }
   );
 };
