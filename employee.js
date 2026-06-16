@@ -45,26 +45,36 @@ exports.getEmployees = (req, res) => {
 
 // ================= CREATE EMPLOYEE =================
 exports.createEmployee = (req, res) => {
+  const { name, role, department, color } = req.body;
 
-  const { id, name, role, department, color } = req.body;
+  if (!name || !role || !department || !color) {
+    return res.status(400).json({
+      success: false,
+      message: "All fields are required",
+    });
+  }
 
   const sql = `
-    INSERT INTO employees (id, name, role, department, color)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO employees (name, role, department, color)
+    VALUES (?, ?, ?, ?)
   `;
 
-  db.query(sql, [id, name, role, department, color], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        error: err.message
+  db.query(
+    sql,
+    [name, role, department, color],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          error: err.message,
+        });
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Employee created",
+        id: result.insertId,
       });
     }
-
-    res.status(201).json({
-      success: true,
-      message: "Employee created",
-      insertedId: result.insertId
-    });
-  });
+  );
 };
