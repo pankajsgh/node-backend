@@ -1,39 +1,47 @@
 const db = require('./db');
-
-// ================= GET + SEARCH =================
 exports.getEmployees = (req, res) => {
+  const search = req.query.search?.trim();
 
-  const search = req.query.search;
+  console.log("SEARCH =", search);
 
-  let sql = "SELECT * FROM employees";
+  let sql = `
+    SELECT *
+    FROM employees
+  `;
+
   let params = [];
 
   if (search) {
     sql += `
-      WHERE name LIKE ? 
-      OR role LIKE ? 
-      OR department LIKE ?
+      WHERE LOWER(name) LIKE ?
+         OR LOWER(role) LIKE ?
+         OR LOWER(department) LIKE ?
     `;
-    const value = `%${search}%`;
+
+    const value = `%${search.toLowerCase()}%`;
     params = [value, value, value];
   }
 
+  console.log("SQL =", sql);
+  console.log("PARAMS =", params);
+
   db.query(sql, params, (err, results) => {
+    console.log("COUNT =", results?.length);
+
     if (err) {
       return res.status(500).json({
         success: false,
-        error: err.message
+        error: err.message,
       });
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       count: results.length,
-      data: results
+      data: results,
     });
   });
 };
-
 
 // ================= CREATE EMPLOYEE =================
 exports.createEmployee = (req, res) => {
