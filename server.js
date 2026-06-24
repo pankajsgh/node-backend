@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const db = require('./db');
 const employee = require('./employee'); // 👈 import file
+const uploadDoc = require('./doc-upload'); // 👈 import file
 
 app.use(cors());
 app.use(express.json());
@@ -27,7 +28,7 @@ app.get('/api/users', (req, res) => {
 // 👉 EMPLOYEE APIs moved to separate file
 app.get('/api/employees', employee.getEmployees);
 app.post('/api/employees', employee.createEmployee);
-app.post('/api/doc-upload', employee.uploadDocument);
+app.post('/api/doc-upload', uploadDoc.uploadDocument);
 
 // Server start
 const PORT = process.env.PORT || 3000;
