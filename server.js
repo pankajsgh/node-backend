@@ -30,6 +30,20 @@ app.get('/api/users', (req, res) => {
 app.get('/api/employees', employee.getEmployees);
 app.post('/api/employees', employee.createEmployee);
 
+
+// Store files in uploads folder
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
+
 app.post(
   '/api/doc-upload',
   upload.single('file'),
