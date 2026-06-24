@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const multer = require('multer');
 
 const db = require('./db');
 const employee = require('./employee'); // 👈 import file
@@ -28,7 +29,12 @@ app.get('/api/users', (req, res) => {
 // 👉 EMPLOYEE APIs moved to separate file
 app.get('/api/employees', employee.getEmployees);
 app.post('/api/employees', employee.createEmployee);
-app.post('/api/doc-upload', uploadDoc.uploadDocument);
+
+app.post(
+  '/api/doc-upload',
+  upload.single('file'),
+  uploadDoc.uploadDocument
+);
 
 // Server start
 const PORT = process.env.PORT || 3000;

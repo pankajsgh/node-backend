@@ -1,40 +1,52 @@
 const db = require('./db');
 
-// ================= upload doc =================
 exports.uploadDocument = (req, res) => {
-  const { title } = req.body;
+  try {
+    console.log('BODY:', req.body);
+    console.log('FILE:', req.file);
 
-  if (!req.file) {
-    return res.status(400).json({
-      success: false,
-      message: 'No file uploaded',
-    });
-  }
+    const { title } = req.body;
 
-  const sql = `
-    INSERT INTO documents
-    (title, file_data)
-    VALUES (?, ?)
-  `;
-
-  db.query(
-    sql,
-    [
-      title,
-      req.file.buffer,
-    ],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          error: err.message,
-        });
-      }
-
-      res.json({
-        success: true,
-        id: result.insertId,
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded',
       });
     }
-  );
+
+    const sql = `
+      INSERT INTO documents (title, file_data)
+      VALUES (?, ?)
+    `;
+
+    db.query(
+      sql,
+      [
+        title || null,
+        req.file.buffer,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error('DB ERROR:', err);
+
+          return res.status(500).json({
+            success: false,
+            error: err.message,
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          id: result.insertId,
+        });
+      }
+    );
+  } catch (e) {
+    console.error('SERVER ERROR:', e);
+
+    res.status(500).json({
+      success: false,
+      error: e.message,
+    });
+  }
 };
