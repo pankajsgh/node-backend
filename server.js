@@ -27,7 +27,7 @@ app.get('/api/users', (req, res) => {
 // 👉 EMPLOYEE APIs moved to separate file
 app.get('/api/employees', employee.getEmployees);
 app.post('/api/employees', employee.createEmployee);
-
+app.post('/api/doc-upload', employee.uploadDocument);
 
 // Server start
 const PORT = process.env.PORT || 3000;
